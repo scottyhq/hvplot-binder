@@ -1,0 +1,14 @@
+name: holoviz
+channels:
+  - conda-forge
+dependencies:
+  - geopandas
+  - geoviews
+  - hvplot
+  - jupyterlab=3
+  - rioxarray
+  - xmlschema
+  - xarray=0.18
+  - pip
+  - pip:
+    - xarray-sentinel
