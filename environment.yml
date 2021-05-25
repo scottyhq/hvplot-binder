@@ -9,6 +9,7 @@ dependencies:
   - rioxarray
   - xmlschema
   - xarray=0.18
+  - python=3.9
   - pip
   - pip:
     - xarray-sentinel
