@@ -28,9 +28,10 @@ jobs:
         echo "machine urs.earthdata.nasa.gov login me password test" > .netrc
         chmod 0600 .netrc
         ls -al .netrc
+        id
         
     - name: Parse netrc
       run: |
-        docker run \
+        docker run --user 1000 \
         -v ${{ github.workspace }}:/home/jovyan:rw \
         $DOCKER_IMAGE python -c "import netrc; (ASF_USER, account, ASF_PASS) = netrc.netrc().authenticators("urs.earthdata.nasa.gov"); print(ASF_USER)"
