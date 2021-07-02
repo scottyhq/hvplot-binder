@@ -7,30 +7,32 @@ on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+env:
+  DOCKER_IMAGE: uwhackweek/snowex:latest
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
+  test:
+    runs-on: ubuntu-20.04
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+    - uses: actions/checkout@v2
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
+    - name: Pull Docker Image
+      run: |
+        docker pull $DOCKER_IMAGE
+        docker images
 
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+    # NOTE: this gets picked up b/c of the docker run -v mount
+    - name: Configure NASA Earthdata Login
+      run: |
+        echo "machine urs.earthdata.nasa.gov login me password test > .netrc
+        ls -al .netrc
+        chown root .netrc
+        chmod 0600 .netrc
+        ls -al .netrc
+        
+    - name: Parse netrc
+      run: |
+        docker run -u root \
+        -v ${{ github.workspace }}:/home/jovyan:rw \
+        $DOCKER_IMAGE python -c "import netrc; (ASF_USER, account, ASF_PASS) = netrc.netrc().authenticators("urs.earthdata.nasa.gov"); print(ASF_USER)"
