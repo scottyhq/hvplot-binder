@@ -25,7 +25,7 @@ jobs:
     # NOTE: this gets picked up b/c of the docker run -v mount
     - name: Configure NASA Earthdata Login
       run: |
-        echo "machine urs.earthdata.nasa.gov login me password test > .netrc
+        echo "machine urs.earthdata.nasa.gov login me password test" > .netrc
         ls -al .netrc
         chown root .netrc
         chmod 0600 .netrc
