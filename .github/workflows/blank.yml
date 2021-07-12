@@ -25,9 +25,16 @@ jobs:
     # NOTE: this gets picked up b/c of the docker run -v mount
     - name: Configure NASA Earthdata Login
       run: |
-        sudo echo "machine urs.earthdata.nasa.gov login me password test" > .netrc
-        ls -al .netrc
-        id
+        docker run --user root \
+        -v ${{ github.workspace }}:/home/jovyan:rw \
+        $DOCKER_IMAGE echo "machine urs.earthdata.nasa.gov login me password test" > .netrc
+    
+    - name: List Directory
+      run: |
+        ls -tlrha
+        docker run --user root \
+        -v ${{ github.workspace }}:/home/jovyan:rw \
+        $DOCKER_IMAGE ls -ltrha
     
     # NOTE: github actions uid=1001, jovyan uid=1000
     - name: Parse netrc
