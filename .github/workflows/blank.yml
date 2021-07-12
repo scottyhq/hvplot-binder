@@ -24,21 +24,10 @@ jobs:
 
     # NOTE: this gets picked up b/c of the docker run -v mount
     - name: Configure NASA Earthdata Login
+      env:
+        # Warning: careful exposing secrets in scripts
+        EARTHDATA_USER: ${{ secrets.EARTHDATA_USER }}
       run: |
         docker run --user root \
         -v ${{ github.workspace }}:/home/jovyan:rw \
-        $DOCKER_IMAGE echo "machine urs.earthdata.nasa.gov login me password test" > .netrc
-    
-    - name: List Directory
-      run: |
-        ls -tlrha
-        docker run --user root \
-        -v ${{ github.workspace }}:/home/jovyan:rw \
-        $DOCKER_IMAGE ls -ltrha
-    
-    # NOTE: github actions uid=1001, jovyan uid=1000
-    - name: Parse netrc
-      run: |
-        docker run --user root \
-        -v ${{ github.workspace }}:/home/jovyan:rw \
-        $DOCKER_IMAGE python -c "import netrc; (ASF_USER, account, ASF_PASS) = netrc.netrc().authenticators('urs.earthdata.nasa.gov'); print(ASF_USER, ASF_PASS)"
+        $DOCKER_IMAGE build.sh
